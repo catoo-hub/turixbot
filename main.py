@@ -1,31 +1,28 @@
 import telebot
-import settings
-
-print("Hello!")
+from settings import API_TOKEN
+from database.db import init_db
+from handlers import register as register_handlers
 
 def main():
-    API_TOKEN = '8219277974:AAH5OPuCRsS_zTrXWSBaZrf50h4ZFn_kO30'
+    # ==Инцилизация базы данных==
+    init_db()
 
-    print("Hello from main()")
+    # ==Инцилизация бота & подключение==
     bot = telebot.TeleBot(API_TOKEN)
 
-    @bot.message_handler(commands=['start'])
-    def send_welcome(message):
-        bot.reply_to(message, "Привет, напиши /help для получения информации по боту\n")
+    # ==Регистрация хэндлеров==
+    register_handlers(bot)
 
-    @bot.message_handler(commands=['help'])
-    def send_help(message):
-        bot.reply_to(message, "Вот доступные команды:\n/start: Запустить бота,\n/help: Отправка команд бота\n")
-
+    # ==Хэндлер для неизвестных команд==
     @bot.message_handler(func=lambda message: True)
     def echo_message(message):
-        bot.reply_to(message, message.text)
+        bot.reply_to(message, f"❓ Неизвестная команда: {message.text}\nНапиши /help")
 
+    # ==Запуск бота==
+    print("✅ Бот запущен!")
     bot.infinity_polling()
 
 
 
-if __name__=="__main__":
-    settings.intilizateDb()
-    
+if __name__ == "__main__":
     main()
