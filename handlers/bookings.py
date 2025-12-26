@@ -3,8 +3,6 @@ from database.models import (
     get_progress, 
     get_balance, 
     get_tour_by_id, 
-    update_balance, 
-    add_progress,
     get_user
 )
 from utils.keyboard import main_menu
@@ -23,14 +21,14 @@ def register(bot):
         
         print(f"[DEBUG] book_: tour_id={tour_id}, balance={balance}, progress={progress}, price={tour['price']}")
         
-        # Проверяем, достаточно ли накоплено
+        # == Проверяем достаточно ли накоплено ==
         if progress >= tour['price']:
-            # Проверяем, есть ли email
+            # == Проверяем есть ли email ==
             if not user['email']:
                 bot.answer_callback_query(call.id, "❌ Добавьте email для бронирования!", show_alert=True)
                 return
             
-            # Вычитаем стоимость тура из прогресса
+            # == Вычитаем стоимость тура из прогресса ==
             make_booking(user_id, tour_id)
             text = f"""
 ✅ <b>Тур забронирован!</b>
@@ -44,7 +42,7 @@ def register(bot):
             bot.edit_message_text(text, user_id, call.message.message_id, 
                                  parse_mode="HTML", reply_markup=main_menu())
         else:
-            # Недостаточно накоплено
+            # == Недостаточно накоплено ==
             needed = tour['price'] - progress
             text = f"""
 ⏳ <b>Недостаточно накопленных средств</b>

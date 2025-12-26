@@ -1,16 +1,17 @@
 def register(bot):
     from utils.keyboard import main_menu
-    from database.models import get_favorites, get_balance
+    from database.models import get_balance
     from utils.keyboard import balance_keyboard, topup_tour_keyboard
     from utils.progress import get_progress_bar
-    from utils.context import set_user_tour
     
+    # == Хэндлер для кнопок ==
     @bot.callback_query_handler(func=lambda call: call.data == "btn_tours")
     def handle_tours_button(call):
         from handlers.tours import show_tours_page
         show_tours_page(bot, call.from_user.id, page=1, message_id=call.message.message_id)
         bot.answer_callback_query(call.id)
     
+    # == Избранное ==
     @bot.callback_query_handler(func=lambda call: call.data == "btn_favorites")
     def handle_favorites_button(call):
         from database.models import get_favorites, get_tour_by_id, get_progress
@@ -28,6 +29,7 @@ def register(bot):
         text = "⭐ <b>Твои избранные туры:</b>\n\n"
         markup = telebot.types.InlineKeyboardMarkup()
         
+        # == Перебираем избранные туры + прогресс ==
         for t in favs:
             progress = get_progress(call.from_user.id, t['tour_id'])
             percent = (progress / t['price']) * 100 if t['price'] > 0 else 0
@@ -48,6 +50,7 @@ def register(bot):
                              reply_markup=markup)
         bot.answer_callback_query(call.id)
     
+    # == Баланс ==
     @bot.callback_query_handler(func=lambda call: call.data == "btn_balance")
     def handle_balance_button(call):
         balance = get_balance(call.from_user.id)
@@ -59,6 +62,7 @@ def register(bot):
                              reply_markup=balance_keyboard())
         bot.answer_callback_query(call.id)
     
+    # == Бронирования ==
     @bot.callback_query_handler(func=lambda call: call.data == "btn_bookings")
     def handle_bookings_button(call):
         from database.models import get_favorites, get_progress, get_tour_by_id
@@ -76,6 +80,7 @@ def register(bot):
         text = "📔 <b>Доступные туры для бронирования:</b>\n\n"
         markup = telebot.types.InlineKeyboardMarkup()
         
+        # == Перебираем избранные туры + прогресс ==
         for t in favs:
             progress = get_progress(call.from_user.id, t['tour_id'])
             percent = (progress / t['price']) * 100 if t['price'] > 0 else 0
@@ -98,22 +103,23 @@ def register(bot):
                              reply_markup=markup)
         bot.answer_callback_query(call.id)
     
-        @bot.callback_query_handler(func=lambda call: call.data == "btn_help")
-        def handle_help_button(call):
-            text = ("ℹ️ <b>TurixBot помогает:</b>\n"
-                    "🌏 Просмотреть туры\n"
-                    "⭐ Добавить в избранное\n"
-                    "💰 Пополнить баланс\n"
-                    "🎫 Забронировать туры\n"
-                    "👤 Управлять профилем")
-            bot.edit_message_text(text,
-                                call.from_user.id,
-                                call.message.message_id,
-                                parse_mode="HTML",
-                                reply_markup=main_menu())
-            bot.answer_callback_query(call.id)
+    # == Помощь ==
+    @bot.callback_query_handler(func=lambda call: call.data == "btn_help")
+    def handle_help_button(call):
+        text = ("ℹ️ <b>TurixBot помогает:</b>\n"
+                "🌏 Просмотреть туры\n"
+                "⭐ Добавить в избранное\n"
+                "💰 Пополнить баланс\n"
+                "🎫 Забронировать туры\n"
+                "👤 Управлять профилем")
+        bot.edit_message_text(text,
+                            call.from_user.id,
+                            call.message.message_id,
+                            parse_mode="HTML",
+                            reply_markup=main_menu())
+        bot.answer_callback_query(call.id)
 
-    
+    # == Главное меню ==
     @bot.callback_query_handler(func=lambda call: call.data == "main_menu")
     def handle_main_menu(call):
         bot.edit_message_text("👋 <b>Главное меню</b>",
@@ -123,6 +129,7 @@ def register(bot):
                              reply_markup=main_menu())
         bot.answer_callback_query(call.id)
     
+    # == Пополнение прогресса тура ==
     @bot.callback_query_handler(func=lambda call: call.data.startswith("topup_") and not call.data.startswith("topup_amount_") and not call.data.startswith("topup_all_"))
     def handle_topup(call):
         from database.models import get_tour_by_id, get_balance, get_progress
@@ -136,7 +143,7 @@ def register(bot):
         tour = get_tour_by_id(tour_id)
         balance = get_balance(user_id)
         progress = get_progress(user_id, tour_id)
-        needed = max(0, tour['price'] - progress)  # ← Исправлено: не может быть отрицательным
+        needed = max(0, tour['price'] - progress)  # fixed: не может быть отрицательным
         
         text = f"""
 💳 <b>Пополнить средства для тура:</b>
@@ -156,6 +163,7 @@ def register(bot):
                              reply_markup=topup_tour_keyboard(tour_id))
         bot.answer_callback_query(call.id)
     
+    # == Обработка пополнения на конкретную сумму ==
     @bot.callback_query_handler(func=lambda call: call.data.startswith("topup_amount_"))
     def handle_topup_amount(call):
         from database.models import get_tour_by_id, get_balance, get_progress, add_progress
@@ -172,7 +180,7 @@ def register(bot):
             bot.answer_callback_query(call.id, f"❌ Недостаточно баланса! Есть: {balance}₽, нужно: {amount}₽", show_alert=True)
             return
         
-        # Переводим средства из баланса в прогресс
+        # == Переводим средства из баланса в прогресс ==
         from database.models import update_balance
         update_balance(user_id, -amount)
         add_progress(user_id, tour_id, amount)
@@ -200,6 +208,7 @@ def register(bot):
                              reply_markup=topup_tour_keyboard(tour_id))
         bot.answer_callback_query(call.id)
     
+    # == Обработка пополнения всего баланса ==
     @bot.callback_query_handler(func=lambda call: call.data.startswith("topup_all_"))
     def handle_topup_all(call):
         from database.models import get_tour_by_id, get_balance, get_progress, add_progress, update_balance

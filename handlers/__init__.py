@@ -5,6 +5,7 @@ from .balance import register as reg_balance
 from .bookings import register as reg_bookings
 from .profile import register as reg_profile
 
+# == Регистрация хэндлеров ==
 def register(bot):
     reg_start(bot)
     reg_buttons(bot)

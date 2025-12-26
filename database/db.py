@@ -12,7 +12,7 @@ def init_db():
     conn = get_conn()
     c = conn.cursor()
     
-    # Users - обновленная таблица с email
+    # == Users ==
     c.execute('''
     CREATE TABLE IF NOT EXISTS Users (
         user_id INTEGER PRIMARY KEY,
@@ -23,7 +23,7 @@ def init_db():
     )
     ''')
     
-    # Tours
+    # == Tours ==
     c.execute('''
     CREATE TABLE IF NOT EXISTS Tours (
         tour_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -35,7 +35,7 @@ def init_db():
     )
     ''')
     
-    # Favorites
+    # == Favorites ==
     c.execute('''
     CREATE TABLE IF NOT EXISTS Favorites (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -48,7 +48,7 @@ def init_db():
     )
     ''')
     
-    # TourProgress
+    # == TourProgress ==
     c.execute('''
     CREATE TABLE IF NOT EXISTS TourProgress (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -62,7 +62,7 @@ def init_db():
     )
     ''')
     
-    # Bookings
+    # == Bookings ==
     c.execute('''
     CREATE TABLE IF NOT EXISTS Bookings (
         booking_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -77,7 +77,7 @@ def init_db():
     
     conn.commit()
     
-    # Проверяем, есть ли записи в Tours
+    # НЕЙРОСЕТЬ! == Загрузка туров из JSON при инициализации базы ==
     c.execute('SELECT COUNT(*) FROM Tours')
     count = c.fetchone()[0]
     

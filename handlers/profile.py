@@ -2,6 +2,7 @@ from database.models import get_user, get_bookings, update_user_email
 from utils.keyboard import main_menu
 
 def register(bot):
+    # == Профиль пользователя ==
     @bot.callback_query_handler(func=lambda call: call.data == "btn_profile")
     def handle_profile(call):
         import telebot
@@ -36,6 +37,7 @@ def register(bot):
                              reply_markup=markup)
         bot.answer_callback_query(call.id)
     
+    # == Добавление/обновление email ==
     @bot.callback_query_handler(func=lambda call: call.data == "profile_add_email")
     def handle_add_email(call):
         user_id = call.from_user.id

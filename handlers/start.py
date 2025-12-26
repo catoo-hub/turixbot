@@ -1,6 +1,7 @@
 def register(bot):
     from utils.keyboard import main_menu
     
+    # == Старт ==
     @bot.message_handler(commands=['start'])
     def handle_start(message):
         from database.models import add_user
@@ -10,6 +11,7 @@ def register(bot):
                         parse_mode="HTML",
                         reply_markup=main_menu())
     
+    # == Помощь ==
     @bot.message_handler(commands=['help'])
     def handle_help(message):
         bot.send_message(message.from_user.id,

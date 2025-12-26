@@ -1,3 +1,5 @@
+"""Утилита для отображения прогресс-бара"""
+
 def get_progress_bar(current, total, length=20):
     if total == 0:
         return '[нет данных]'

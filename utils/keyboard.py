@@ -1,7 +1,7 @@
 import telebot
 
 def main_menu():
-    """Главное меню с callback_data"""
+    """Главное меню с коллбэком кнопок"""
     markup = telebot.types.InlineKeyboardMarkup()
     markup.add(telebot.types.InlineKeyboardButton("🌏 Туры", callback_data="btn_tours"))
     markup.add(telebot.types.InlineKeyboardButton("⭐ Избранные", callback_data="btn_favorites"))
@@ -12,7 +12,7 @@ def main_menu():
     return markup
 
 def tours_pagination_keyboard(page, total_pages):
-    """Inline клавиатура для навигации по турам"""
+    """Инлайн клавиатура для навигации по турам"""
     markup = telebot.types.InlineKeyboardMarkup()
     
     if page > 1:
@@ -42,7 +42,7 @@ def balance_keyboard():
     return markup
 
 def topup_tour_keyboard(tour_id):
-    """Клавиатура пополнения прогресса тура с готовыми суммами"""
+    """Клавиатура пополнения прогресса тура с прессетами сумм"""
     markup = telebot.types.InlineKeyboardMarkup()
     amounts = [5000, 10000, 20000, 50000]
     for amount in amounts:

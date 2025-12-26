@@ -1,6 +1,7 @@
 from database.db import get_conn
 from datetime import datetime
 
+# == Создание юзера ==
 def add_user(user_id, username):
     conn = get_conn()
     c = conn.cursor()
@@ -9,6 +10,7 @@ def add_user(user_id, username):
     conn.commit()
     conn.close()
 
+# == Получение юзера ==
 def get_user(user_id):
     """Получить информацию о пользователе"""
     conn = get_conn()
@@ -18,6 +20,7 @@ def get_user(user_id):
     conn.close()
     return user
 
+# == Обновление email юзера ==
 def update_user_email(user_id, email):
     """Обновить email пользователя"""
     conn = get_conn()
@@ -26,6 +29,7 @@ def update_user_email(user_id, email):
     conn.commit()
     conn.close()
 
+# == Получение туров с пагинацией ==
 def get_tours(page=1, per_page=3):
     """Получить туры с пагинацией"""
     conn = get_conn()
@@ -49,6 +53,7 @@ def get_tours(page=1, per_page=3):
     
     return tours, total_pages
 
+# == Получение конкретного тура по ID ==
 def get_tour_by_id(tour_id):
     """Получить конкретный тур по ID"""
     conn = get_conn()
@@ -58,6 +63,7 @@ def get_tour_by_id(tour_id):
     conn.close()
     return tour
 
+# == Добавление в избранное ==
 def add_favorite(user_id, tour_id):
     conn = get_conn()
     c = conn.cursor()
@@ -71,6 +77,7 @@ def add_favorite(user_id, tour_id):
         conn.close()
         return False
 
+# == Удаление из избранного ==
 def remove_favorite(user_id, tour_id):
     conn = get_conn()
     c = conn.cursor()
@@ -78,6 +85,7 @@ def remove_favorite(user_id, tour_id):
     conn.commit()
     conn.close()
 
+# == Проверка в избранном ли тур ==
 def is_favorite(user_id, tour_id):
     """Проверить, в избранном ли тур"""
     conn = get_conn()
@@ -87,6 +95,7 @@ def is_favorite(user_id, tour_id):
     conn.close()
     return result
 
+# == Получение всех избранных туров пользователя ==
 def get_favorites(user_id):
     conn = get_conn()
     c = conn.cursor()
@@ -97,6 +106,7 @@ def get_favorites(user_id):
     conn.close()
     return favs
 
+# == Добавление прогресса к туру ==
 def add_progress(user_id, tour_id, amount):
     conn = get_conn()
     c = conn.cursor()
@@ -118,6 +128,7 @@ def add_progress(user_id, tour_id, amount):
     conn.commit()
     conn.close()
 
+# == Получение прогресса по туру ==
 def get_progress(user_id, tour_id):
     """Получить накопленные средства для тура"""
     conn = get_conn()
@@ -127,6 +138,7 @@ def get_progress(user_id, tour_id):
     conn.close()
     return res[0] if res else 0
 
+# == Получение всех бронирований пользователя ==
 def get_bookings(user_id):
     """Получить все бронирования пользователя"""
     conn = get_conn()
@@ -142,6 +154,7 @@ def get_bookings(user_id):
     conn.close()
     return bookings
 
+# == Создание бронирования ==
 def make_booking(user_id, tour_id):
     conn = get_conn()
     c = conn.cursor()
@@ -152,6 +165,7 @@ def make_booking(user_id, tour_id):
     conn.commit()
     conn.close()
 
+# == Получение баланса пользователя ==
 def get_balance(user_id):
     conn = get_conn()
     c = conn.cursor()
@@ -160,6 +174,7 @@ def get_balance(user_id):
     conn.close()
     return res[0] if res else 0
 
+# == Обновление баланса пользователя ==
 def update_balance(user_id, amount):
     conn = get_conn()
     c = conn.cursor()
