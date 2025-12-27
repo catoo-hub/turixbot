@@ -127,34 +127,34 @@ def register(bot):
             reply_markup=tour_detail_keyboard(tour_id)
         )
 
-    # == Функция отображения страницы туров ==
-    def show_tours_page(bot, user_id, page, message_id=None):
-        from database.models import get_tours
-        from utils.keyboard import tours_pagination_keyboard
-        import telebot
-        
-        tours, total_pages = get_tours(page=page, per_page=3)
-        
-        if not tours:
-            text = "❌ Туры не найдены"
-        else:
-            text = f"🌏 <b>Доступные туры (Страница {page}/{total_pages})</b>\n\n"
-            for t in tours:
-                text += f"<b>{t['name']}</b>\n💰 {t['price']}₽ | ⏱️ {t['duration_days']} дней\n\n"
-        
-        markup = telebot.types.InlineKeyboardMarkup()
-        
-        tours, _ = get_tours(page=page, per_page=3)
+# == Функция отображения страницы туров ==
+def show_tours_page(bot, user_id, page, message_id=None):
+    from database.models import get_tours
+    from utils.keyboard import tours_pagination_keyboard
+    import telebot
+    
+    tours, total_pages = get_tours(page=page, per_page=3)
+    
+    if not tours:
+        text = "❌ Туры не найдены"
+    else:
+        text = f"🌏 <b>Доступные туры (Страница {page}/{total_pages})</b>\n\n"
         for t in tours:
-            tour_id = t['tour_id']
-            print(f"[DEBUG] Добавляю кнопку: tour_detail_{tour_id}")
-            markup.add(telebot.types.InlineKeyboardButton(f"📍 {t['name']}", callback_data=f"tour_detail_{tour_id}"))
-        
-        nav_markup = tours_pagination_keyboard(page, total_pages)
-        for row in nav_markup.keyboard:
-            markup.add(*row)
-        
-        if message_id:
-            bot.edit_message_text(text, user_id, message_id, parse_mode="HTML", reply_markup=markup)
-        else:
-            bot.send_message(user_id, text, parse_mode="HTML", reply_markup=markup)
+            text += f"<b>{t['name']}</b>\n💰 {t['price']}₽ | ⏱️ {t['duration_days']} дней\n\n"
+    
+    markup = telebot.types.InlineKeyboardMarkup()
+    
+    tours, _ = get_tours(page=page, per_page=3)
+    for t in tours:
+        tour_id = t['tour_id']
+        print(f"[DEBUG] Добавляю кнопку: tour_detail_{tour_id}")
+        markup.add(telebot.types.InlineKeyboardButton(f"📍 {t['name']}", callback_data=f"tour_detail_{tour_id}"))
+    
+    nav_markup = tours_pagination_keyboard(page, total_pages)
+    for row in nav_markup.keyboard:
+        markup.add(*row)
+    
+    if message_id:
+        bot.edit_message_text(text, user_id, message_id, parse_mode="HTML", reply_markup=markup)
+    else:
+        bot.send_message(user_id, text, parse_mode="HTML", reply_markup=markup)
